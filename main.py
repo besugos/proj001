@@ -3,12 +3,16 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from persistency import rows_as_dicts
 
 engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
 Session = sessionmaker(bind=engine)
 session = Session()
+
 
 
 def print_hi(name):
@@ -24,9 +28,13 @@ if __name__ == '__main__':
 
 
 def test_db():
-    result = session.execute('SELECT * FROM proj001.author')
-    for row in result:
-        print(row)
+    # result = session.execute('SELECT * FROM proj001.author')
+    # for row in result:
+    #     print(row)
+    query = 'SELECT * FROM proj001.author'
+    cursor = session.execute(query).cursor
+    authors = rows_as_dicts(cursor)
+    print(authors)
 
 
 test_db()
