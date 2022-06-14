@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
-from persistency import read_users, read_authors, read_papers
+from models import Author
+from persistency import read_users, read_authors, read_papers, create_author
 
 app = FastAPI()
 
@@ -25,6 +26,12 @@ async def get_users():
 async def get_authors(name: str = None):
     authors = read_authors(name)
     return authors
+
+
+@app.post("/authors")
+async def post_authors(author: Author):
+    created_author = create_author(author.name, author.picture)
+    return created_author
 
 
 @app.get("/papers")
