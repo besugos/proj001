@@ -12,6 +12,12 @@ def get_session():
     return session
 
 
+def get_id():
+    myuuid = str(uuid.uuid1().int)
+    id = int((myuuid[0:3])(myuuid[(len(myuuid) - 4):len(myuuid)]))
+    return id
+
+
 def rows_as_dicts(cursor):
     """convert tuple result to dict with cursor"""
     col_names = [i[0] for i in cursor.description]
@@ -38,12 +44,11 @@ def read_authors(name: str = None):
 
 def create_author(name: str, picture: str):
     session = get_session()
-    myuuid = str(uuid.uuid1().int)
-    id = int(myuuid[(len(myuuid)-8):len(myuuid)])
-    query = f'''INSERT INTO proj001.author VALUES ({id}, '{name}', '{picture}')'''
+    author_id = get_id()
+    query = f'''INSERT INTO proj001.author VALUES ({author_id}, '{name}', '{picture}')'''
     session.execute(query)
     session.commit()
-    query = f'SELECT * FROM proj001.author WHERE author_id = {id}'
+    query = f'SELECT * FROM proj001.author WHERE author_id = {author_id}'
     cursor = session.execute(query).cursor
     authors = rows_as_dicts(cursor)
     return authors
