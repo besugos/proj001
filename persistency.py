@@ -12,9 +12,16 @@ def get_session():
     return session
 
 
+def get_engine():
+    engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return engine
+
+
 def get_id():
     myuuid = str(uuid.uuid1().int)
-    id = int((myuuid[0:3])(myuuid[(len(myuuid) - 4):len(myuuid)]))
+    id = int((myuuid[0:3]) + (myuuid[(len(myuuid) - 4):len(myuuid)]))
     return id
 
 
@@ -43,13 +50,12 @@ def read_authors(name: str = None):
 
 
 def create_author(name: str, picture: str):
-    session = get_session()
-    author_id = get_id()
-    query = f'''INSERT INTO proj001.author VALUES ({author_id}, '{name}', '{picture}')'''
-    session.execute(query)
-    session.commit()
-    query = f'SELECT * FROM proj001.author WHERE author_id = {author_id}'
-    cursor = session.execute(query).cursor
+    engine = get_engine()
+    query = f'''INSERT INTO proj001.author (name, picture) VALUES ('{name}', '{picture}') RETURNING author_id'''
+    result = engine.execute(query)
+    returned_id = result.fetchone()[0]
+    query = f'SELECT * FROM proj001.author WHERE author_id = {returned_id}'
+    cursor = engine.execute(query).cursor
     authors = rows_as_dicts(cursor)
     return authors
 
