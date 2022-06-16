@@ -7,12 +7,28 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from models import Author
 from persistency import rows_as_dicts
 
 engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
 Session = sessionmaker(bind=engine)
 session = Session()
 
+author = Author
+author.name = 'Juca'
+author.picture = 'teste'
+author.author_id = 101
+
+print(author)
+
+query = f'''INSERT INTO proj001.author VALUES (10, '{author['name']}', '{author['picture']}')'''
+# query = f'''INSERT 11, "Zé", "teste" INTO
+try:
+    session.execute(query)
+    session.commit()
+except Exception as e:
+    raise e
+# authors = rows_as_dicts(cursor)
 
 
 def print_hi(name):
@@ -23,6 +39,7 @@ def print_hi(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
+
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
 

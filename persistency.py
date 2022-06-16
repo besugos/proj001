@@ -14,8 +14,6 @@ def get_session():
 
 def get_engine():
     engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
-    Session = sessionmaker(bind=engine)
-    session = Session()
     return engine
 
 
@@ -39,6 +37,26 @@ def read_users():
     return users
 
 
+def get_user_by_username(username: str):
+    session = get_session()
+    query = f'''SELECT * FROM proj001.user WHERE username = '{username}' '''
+    cursor = session.execute(query).cursor
+    users = rows_as_dicts(cursor)
+    if len(users) > 0:
+        user = users[0]
+    else:
+        user = []
+    return user
+
+
+def create_user(type: str, username: str, password: str):
+    engine = get_engine()
+    query = f'''INSERT INTO proj001.user (type, username, password) VALUES ('{type}', '{username}', '{password}') RETURNING user_id, username, type'''
+    result = engine.execute(query)
+    created_user = result.fetchone()
+    return created_user
+
+
 def read_authors(name: str = None):
     session = get_session()
     query = 'SELECT * FROM proj001.author'
@@ -51,13 +69,10 @@ def read_authors(name: str = None):
 
 def create_author(name: str, picture: str):
     engine = get_engine()
-    query = f'''INSERT INTO proj001.author (name, picture) VALUES ('{name}', '{picture}') RETURNING author_id'''
+    query = f'''INSERT INTO proj001.author (name, picture) VALUES ('{name}', '{picture}') RETURNING author_id, name, picture'''
     result = engine.execute(query)
-    returned_id = result.fetchone()[0]
-    query = f'SELECT * FROM proj001.author WHERE author_id = {returned_id}'
-    cursor = engine.execute(query).cursor
-    authors = rows_as_dicts(cursor)
-    return authors
+    created_author = result.fetchone()
+    return created_author
 
 
 def read_papers(name: str = None):
