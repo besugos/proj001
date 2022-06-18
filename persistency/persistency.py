@@ -1,7 +1,15 @@
 import uuid
 
+from fastapi import HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from models.models import User
+from utils.utils import verify_token
+
+oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
 
 
 
@@ -67,14 +75,6 @@ def read_authors(name: str = None):
     return authors
 
 
-def create_author(name: str, picture: str):
-    engine = get_engine()
-    query = f'''INSERT INTO proj001.author (name, picture) VALUES ('{name}', '{picture}') RETURNING author_id, name, picture'''
-    result = engine.execute(query)
-    created_author = result.fetchone()
-    return created_author
-
-
 def read_papers(name: str = None):
     session = get_session()
     query = 'SELECT * FROM proj001.paper'
@@ -84,3 +84,27 @@ def read_papers(name: str = None):
     papers = rows_as_dicts(cursor)
     return papers
 
+
+def obter_usuario_logado(token: str = Depends(oauth2_schema)):
+    try:
+        username: str = verify_token(token)
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
+
+    if not username:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
+
+    user = get_user_by_username(username)
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
+
+    return user
+
+
+def create_author(name: str, picture: str):
+    engine = get_engine()
+    query = f'''INSERT INTO proj001.author (name, picture) VALUES ('{name}', '{picture}') RETURNING author_id, name, picture'''
+    result = engine.execute(query)
+    created_author = result.fetchone()
+    return created_author

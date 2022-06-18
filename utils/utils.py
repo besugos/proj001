@@ -1,6 +1,11 @@
+
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from jose import jwt
+from jose import jwt, JWTError
+from fastapi import Depends, FastAPI, HTTPException, status
+
+
 
 pwd_context = CryptContext(schemes=['bcrypt'])
 SECRET_KEY = '1f23ab2c0cf6a0f3af6c320c9f1962adb112c3f1492a747b0adf740a41ee2b57'
@@ -27,3 +32,6 @@ def create_token(data: dict):
 def verify_token(token: str):
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     return payload.get('sub')
+
+
+

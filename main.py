@@ -7,8 +7,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models import Author
-from persistency import rows_as_dicts
+from models.models import Author
+from persistency.persistency import rows_as_dicts
 
 engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
 Session = sessionmaker(bind=engine)

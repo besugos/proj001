@@ -1,10 +1,11 @@
-from fastapi import Depends, FastAPI, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError
 
-from models import Author, User, LoginData
-from persistency import read_users, read_authors, read_papers, create_author, create_user, get_session, \
-    get_user_by_username
-from utils import create_hash, verify_hash
+from models.models import Author, User, LoginData
+from persistency.persistency import read_users, read_authors, read_papers, create_author, create_user, \
+    get_user_by_username, get_session, obter_usuario_logado
+from utils.utils import create_hash, verify_hash, create_token, verify_token
 
 app = FastAPI()
 
@@ -39,7 +40,9 @@ async def get_authors(name: str = None):
 
 
 @app.post("/authors", status_code=status.HTTP_201_CREATED)
-async def post_authors(author: Author):
+async def post_authors(author: Author, user=Depends(obter_usuario_logado)):
+    if not user:
+        return user
     created_author = create_author(author.name, author.picture)
     return created_author
 
@@ -64,5 +67,13 @@ async def login(login_data: LoginData):
     if not valid_password:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Wrong credentials')
 
+    token = create_token({'sub': user['username']})
+
+    return {"user": user, "token": token}
+
+
+@app.post("/me")
+async def me(user=Depends(obter_usuario_logado)):
     return user
+
 
