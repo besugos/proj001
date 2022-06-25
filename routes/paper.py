@@ -7,24 +7,18 @@ from persistency.persistency import read_users, read_authors, read_papers, creat
     get_user_by_username, get_session, obter_usuario_logado
 from utils.utils import create_hash, verify_hash, create_token, verify_token
 
-app = FastAPI()
+from fastapi import APIRouter
+from typing import Optional
+from fastapi import Query
+
+router = APIRouter(
+    prefix="/paper",
+    tags=["Paper"],
+    responses={404: {"description": "Not found"}},
+)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Projeto 001"}
-
-
-@app.get("/healthcheck")
-async def healthcheck():
-    return {"message": "Healthy"}
-
-
-
-
-
-
-
-
-
-
+@router.get("/")
+async def get_papers():
+    papers = read_papers()
+    return papers
