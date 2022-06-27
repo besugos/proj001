@@ -1,25 +1,16 @@
-import uuid
-from datetime import datetime
-
 from fastapi import HTTPException, status, Depends, Request
 
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from fastapi import APIRouter
-from typing import Optional
-from fastapi import Query
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import Limiter
 from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
 
 from models.models import User, LoginData
-from persistency.persistency import read_users, create_user, get_user_by_username, get_user_info
-from utils.utils import verify_token, create_hash, verify_hash, create_token, get_token_expiry
 
-# from starlette.requests import Request
+from persistency.persistency_utils import get_user_info
+from persistency.user_persistency import read_users, create_user, get_user_by_username
+from utils.utils import create_hash, verify_hash, create_token, get_token_expiry
 
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
@@ -46,7 +37,7 @@ def post_user(request: Request, user: User, current_user: object = Depends(get_u
     if 'type' in current_user:
         if current_user['type'] == 'admin':
             password = create_hash(user.password)
-            created_user = create_user(user.type, password, user.username)
+            created_user = create_user(user.type, user.username, password)
             return created_user
 
 
