@@ -85,7 +85,7 @@ def read_papers(name: str = None):
     return papers
 
 
-def obter_usuario_logado(token: str = Depends(oauth2_schema)):
+def get_user_info(token: str = Depends(oauth2_schema)):
     try:
         username: str = verify_token(token)
     except JWTError:

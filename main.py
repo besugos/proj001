@@ -1,57 +1,34 @@
-# This is a sample Python script.
+import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
+from fastapi import APIRouter
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from routes import user, author, paper
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+limiter = Limiter(key_func=get_remote_address, default_limits=["1/minute"])
+app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+origins = ["http://localhost:8005"]
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-from models.models import Author
-from persistency.persistency import rows_as_dicts
+router = APIRouter()
+router.include_router(user.router)
+router.include_router(author.router)
+router.include_router(paper.router)
 
-engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
-Session = sessionmaker(bind=engine)
-session = Session()
+app.include_router(router)
 
-author = Author
-author.name = 'Juca'
-author.picture = 'teste'
-author.author_id = 101
-
-print(author)
-
-query = f'''INSERT INTO proj001.author VALUES (10, '{author['name']}', '{author['picture']}')'''
-# query = f'''INSERT 11, "Zé", "teste" INTO
-try:
-    session.execute(query)
-    session.commit()
-except Exception as e:
-    raise e
-# authors = rows_as_dicts(cursor)
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
-
-
-def test_db():
-    # result = session.execute('SELECT * FROM proj001.author')
-    # for row in result:
-    #     print(row)
-    query = 'SELECT * FROM proj001.author'
-    cursor = session.execute(query).cursor
-    authors = rows_as_dicts(cursor)
-    print(authors)
-
-
-test_db()
+    uvicorn.run("main:app", host='127.0.0.1', port=8000, log_level="info", reload=True)
+    print("running")
