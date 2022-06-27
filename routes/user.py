@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, Request
 
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
@@ -19,7 +19,7 @@ from models.models import User, LoginData
 from persistency.persistency import read_users, create_user, get_user_by_username, get_user_info
 from utils.utils import verify_token, create_hash, verify_hash, create_token, get_token_expiry
 
-from starlette.requests import Request
+# from starlette.requests import Request
 
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
@@ -42,7 +42,7 @@ async def get_users(request: Request, current_user=Depends(get_user_info)):
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 @limiter.limit("1/minute")
-def post_user(user: User, request: Request, current_user: object = Depends(get_user_info)):
+def post_user(request: Request, user: User, current_user: object = Depends(get_user_info)):
     if 'type' in current_user:
         if current_user['type'] == 'admin':
             password = create_hash(user.password)
@@ -51,7 +51,8 @@ def post_user(user: User, request: Request, current_user: object = Depends(get_u
 
 
 @router.post("/token")
-async def login(login_data: LoginData):
+@limiter.limit("1/minute")
+async def login(request: Request, login_data: LoginData):
     password = login_data.password
     username = login_data.username
     user = get_user_by_username(username)
@@ -69,13 +70,15 @@ async def login(login_data: LoginData):
     return {"user": user, "token": token['token'], 'expires at': token['exp'].strftime("%d/%m/%Y %H:%M")}
 
 
-@router.post("/me")
-async def me(user=Depends(get_user_info)):
+@router.get("/me")
+@limiter.limit("1/minute")
+async def me(request: Request, user=Depends(get_user_info)):
     return user
 
 
 @router.get("/expiry")
-async def expiry(exp=Depends(get_token_expiry)):
+@limiter.limit("1/minute")
+async def expiry(request: Request, exp=Depends(get_token_expiry)):
     if 'Error' in exp:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Expired Token')
     return {'Token expires at': exp}
