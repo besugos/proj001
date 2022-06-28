@@ -23,6 +23,14 @@ def read_authors(name: str = None):
     return authors
 
 
+def read_author_by_id(author_id: int):
+    session = get_session()
+    query = f'''SELECT * FROM proj001.author WHERE author_id = {author_id}'''
+    cursor = session.execute(query).cursor
+    authors = rows_as_dicts(cursor)
+    return authors
+
+
 def create_author(name: str, picture: str):
     engine = get_engine()
     query = f'''INSERT INTO proj001.author (name, picture) VALUES ('{name}', '{picture}') RETURNING author_id, name, picture'''

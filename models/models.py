@@ -17,11 +17,11 @@ class Author(BaseModel):
 
 
 class Paper(BaseModel):
-    paper_id: int
+    paper_id: int = None
     category: str
-    title: int
+    title: str
     summary: str
-    firstParagraph: str
+    first_paragraph: str
     body: str
     author_id: int
 

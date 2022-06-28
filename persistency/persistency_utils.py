@@ -7,6 +7,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # import persistency.user_persistency
+import persistency
 from models.models import User
 # from persistency.user_persistency import get_user_by_username
 from utils.utils import verify_token
