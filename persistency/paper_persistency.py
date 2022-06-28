@@ -28,3 +28,11 @@ def create_paper(title: str, category: str, summary: str, first_paragraph: str, 
     result = engine.execute(query)
     created_paper = result.fetchone()
     return created_paper
+
+
+def update_paper(paper_id: int, title: str, category: str, summary: str, first_paragraph: str, body: str, author_id: int):
+    engine = get_engine()
+    query = f'''UPDATE proj001.paper SET title = '{title}', category = '{category}', summary = '{summary}', first_paragraph = '{first_paragraph}', body = '{body}', author_id = '{author_id}' WHERE paper_id = {paper_id} '''
+    result = engine.execute(query)
+    return result
+

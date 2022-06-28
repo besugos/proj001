@@ -28,7 +28,7 @@ def read_author_by_id(author_id: int):
     query = f'''SELECT * FROM proj001.author WHERE author_id = {author_id}'''
     cursor = session.execute(query).cursor
     authors = rows_as_dicts(cursor)
-    return authors
+    return authors[0]
 
 
 def create_author(name: str, picture: str):
@@ -37,3 +37,10 @@ def create_author(name: str, picture: str):
     result = engine.execute(query)
     created_author = result.fetchone()
     return created_author
+
+
+def update_author(author_id: int, name: str, picture: str):
+    engine = get_engine()
+    query = f'''UPDATE proj001.author SET name = '{name}', picture = '{picture}' WHERE author_id = {author_id} '''
+    result = engine.execute(query)
+    return result
