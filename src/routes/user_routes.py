@@ -6,11 +6,11 @@ from fastapi import APIRouter
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from models.models import User, LoginData
+from src.models.models import User, LoginData
 
-from persistency.persistency_utils import get_user_info
-from persistency.user_persistency import read_users, create_user, get_user_by_username
-from utils.utils import create_hash, verify_hash, create_token, get_token_expiry
+from src.persistency.persistency_utils import get_user_info
+from src.persistency.user_persistency import read_users, create_user, get_user_by_username
+from src.utils.utils import create_hash, verify_hash, create_token, get_token_expiry
 
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')

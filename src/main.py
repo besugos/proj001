@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
-from routes import user_routes, author_routes, paper_routes
+from src.routes import user_routes, author_routes, paper_routes
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["1/minute"])
 app = FastAPI()
@@ -29,6 +29,6 @@ router.include_router(paper_routes.router)
 
 app.include_router(router)
 
-if __name__ == '__main__':
-    uvicorn.run("main:app", host='127.0.0.1', port=8000, log_level="info", reload=True)
-    print("running")
+# if __name__ == '__main__':
+#     uvicorn.run("main:app", host='127.0.0.1', port=8000, log_level="info", reload=True)
+#     print("running")

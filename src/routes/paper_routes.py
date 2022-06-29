@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Request, Depends, status, HTTPException
 
-from models.models import Paper
-from persistency.author_persistency import read_author_by_id
-from persistency.paper_persistency import read_papers, create_paper, update_paper
+from src.models.models import Paper
+from src.persistency.author_persistency import read_author_by_id
+from src.persistency.paper_persistency import read_papers, create_paper, update_paper
 
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 
-from persistency.persistency_utils import get_user_info
+from src.persistency.persistency_utils import get_user_info
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["1/minute"])
 

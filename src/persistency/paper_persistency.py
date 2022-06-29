@@ -6,9 +6,9 @@ from jose import JWTError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from models.models import User
-from persistency.persistency_utils import get_session, rows_as_dicts, get_engine
-from utils.utils import verify_token
+
+from src.persistency.persistency_utils import get_session, rows_as_dicts, get_engine
+
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
 
