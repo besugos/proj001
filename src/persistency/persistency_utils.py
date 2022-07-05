@@ -16,14 +16,14 @@ oauth2_schema = OAuth2PasswordBearer(tokenUrl='token')
 
 
 def get_session():
-    engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
+    engine = create_engine("postgresql+psycopg2://postgres:root@172.20.1.2:5432/projeto001")
     Session = sessionmaker(bind=engine)
     session = Session()
     return session
 
 
 def get_engine():
-    engine = create_engine("postgresql+psycopg2://postgres:root@localhost:5432/projeto001")
+    engine = create_engine("postgresql+psycopg2://postgres:root@172.20.1.2:5432/projeto001")
     return engine
 
 
@@ -48,7 +48,7 @@ def get_user_info(token: str = Depends(oauth2_schema)):
     if not username:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
 
-    user = persistency.user_persistency.get_user_by_username(username)
+    user = src.persistency.user_persistency.get_user_by_username(username)
 
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Invalid Token')
