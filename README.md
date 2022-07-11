@@ -31,18 +31,22 @@ sudo docker run --name proj001 --restart always -v $HOME/banco-postgres:/var/lib
 
 
 3 - clone o projeto com:
+
 git@github.com:besugos/proj001.git
 
 
 4 - faça o build do docker:
+
 docker build -t api_proj001:0.3 .
 
 
 5 - rode o docker compose para criar a relação entre os dockers e executá-los:
+
 docker-compose up -d
 
 
 6 - abra o projeto no Pycharm e configure o banco na aba Database, com os seguintes parâmetros:
+
     Host: localhost
     Port: 5432
     User: postgres
