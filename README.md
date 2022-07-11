@@ -1,6 +1,7 @@
 # proj001
 
 1 - instalar o docker:
+  
   sudo apt update
 
   sudo apt install apt-transport-https ca-certificates curl software-properties-common gnupg lsb-release
