@@ -1,6 +1,6 @@
 # proj001
 
-1 - instalar o docker:
+## 1 - instalar o docker:
   
   sudo apt update
 
@@ -21,7 +21,7 @@
 
 
 
-2 - instalar o postgres:
+## 2 - instalar o postgres:
 
 sudo docker pull postgres:latest
 sudo docker run --name proj001 -e POSTGRES_PASSWORD=root -d postgres:latest
@@ -30,22 +30,22 @@ docker commit proj001 db-proj001:0.1
 sudo docker run --name proj001 --restart always -v $HOME/banco-postgres:/var/lib/postgresql/data -p5432:5432 -e POSTGRES_PASSWORD=root -d db-proj001:0.1
 
 
-3 - clone o projeto com:
+## 3 - clone o projeto com:
 
 git@github.com:besugos/proj001.git
 
 
-4 - faça o build do docker:
+## 4 - faça o build do docker:
 
 docker build -t api_proj001:0.3 .
 
 
-5 - rode o docker compose para criar a relação entre os dockers e executá-los:
+## 5 - rode o docker compose para criar a relação entre os dockers e executá-los:
 
 docker-compose up -d
 
 
-6 - abra o projeto no Pycharm e configure o banco na aba Database, com os seguintes parâmetros:
+## 6 - abra o projeto no Pycharm e configure o banco na aba Database, com os seguintes parâmetros:
 
     Host: localhost
     Port: 5432
@@ -54,15 +54,15 @@ docker-compose up -d
     Database: projeto001
 
 
-7 - Clicar ao lado de "projeto001", onde estará "0 of 2" e selecionar o schema proj001
+## 7 - Clicar ao lado de "projeto001", onde estará "0 of 2" e selecionar o schema proj001
 
 
-8 - Clicar com o botão direito em proj001 --> New --> Query console
+## 8 - Clicar com o botão direito em proj001 --> New --> Query console
 
 
-9 - rodar o script sql abaixo
+## 9 - rodar o script sql abaixo
 
-
+``` 
 create table author
 (
     author_id serial
@@ -103,6 +103,6 @@ create table paper
 
 alter table paper
     owner to postgres;
+```
 
-
-10 - Pronto, a api está pronta para ser utilizada em localhost:8002. Para a documentação dos endpoints da api, acesso localhost:8002/docs
+## 10 - Pronto, a api está pronta para ser utilizada em localhost:8002. Para a documentação dos endpoints da api, acesso localhost:8002/docs
